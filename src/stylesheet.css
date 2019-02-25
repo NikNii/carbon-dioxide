@@ -1,0 +1,113 @@
+
+/* CSS for landscape orientation */
+@media only screen and (min-width: 900px){
+    html {
+        width: 100vw;
+        height: 100vh;
+    }
+    body {
+        width: 100vw;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        display: block;
+        position: relative;
+        top: 0;
+        left: 0;
+        font-family: 'Open Sans', sans-serif;
+        background-color: #B3BEC3;
+        background-image: url("https://images.unsplash.com/photo-1493087670264-2f7f5844b402?ixlib=rb-1.2.1&auto=format&fit=crop&w=2698&q=80");
+        background-size: cover;
+        background-attachment: fixed;
+    }
+    .ui-active-dimmer {
+        width: 100%;
+    }
+    .container {
+        width: 100%;
+        height: 90vh;
+        margin: 0;
+        font-size: 25px;
+        padding: 0;
+    }
+    .container p {
+        margin: 0;
+    }
+    .toolbar {
+        width: 100%;
+        height: 10vh;
+        padding: 10px;
+        box-sizing: border-box;
+        position: sticky;
+        top: 0;
+        left: 0;
+        color: white;
+        text-align: center;
+        font-size: 60px;
+        font-weight: lighter;
+        background-color: #384047;
+        box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+        z-index: 10;
+    }
+    .content {
+        width: 75%;
+        max-width: 1400px;
+        height: 100%;
+        margin: auto;
+        padding: 20px 25px;
+        box-sizing: border-box;
+        color: white;
+        background-color: rgba(0,0,0,0.5);
+    }
+}
+
+/* CSS for portrait orientation */
+@media only screen and (max-width: 899px){
+    body{
+        background-color: #366293;
+        background: linear-gradient(#366293,#244060);
+    }
+    .container {
+        width: 100vw;
+        position: static;
+        top: 0;
+        left: 0;
+        margin: 0;
+        margin-top: -20px;
+        padding: 0;
+        font-family: 'Open Sans', sans-serif;
+    }
+    p {
+        font-size: 3vh;
+    }
+    .toolbar {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 8vh;
+        background-color: #264568;
+        box-shadow: 0px 2px 4px rgba(0,0,0,0.3);
+        font-weight: lighter;
+        z-index: 10;
+    }
+    .toolbar p{
+        display: block;
+        width: auto;
+        margin: 0;
+        margin-top: -7px;
+        font-size: 6vh;
+        padding-top: 5px;
+        padding-left: 3%;
+        color: white;
+    }
+    .content {
+        display: block;
+        width: 100vw;
+        height: 90vh;
+        position: absolute;
+        top: 9vh;
+    }
+    
+}
