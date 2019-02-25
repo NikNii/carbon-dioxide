@@ -36,7 +36,7 @@ class App extends React.Component{
             return (
                 <div className="container">
                     <div className="toolbar">
-                        <p>Carbon Dioxide Emissions</p>
+                        <p>CO<sub>2</sub> Emissions</p>
                     </div>
                     <div className="content">
                         <p>Nunc sed placerat massa. Etiam ultrices, magna vel faucibus lobortis, lacus dolor fermentum diam, at cursus dui nibh nec erat. In scelerisque vestibulum lorem, id venenatis mi sodales sed. Nullam feugiat libero lorem, non consequat tellus ultrices sed. Nulla quis nunc at orci iaculis molestie a et velit. Nulla sit amet tempus tellus. Suspendisse aliquet eu dui vitae rutrum. Maecenas cursus auctor dolor sed rhoncus. Proin vestibulum dapibus felis, a dignissim nisl mollis auctor. Curabitur diam enim, eleifend sed turpis et, pulvinar mollis dolor. Ut ut lectus rutrum, dictum lectus faucibus, maximus est. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Quisque posuere mauris vitae velit scelerisque, cursus rutrum magna tempor. Nullam cursus, metus vel dignissim tempor, sapien augue accumsan elit, ut luctus nulla velit varius nulla.</p>
@@ -52,8 +52,7 @@ class App extends React.Component{
     
     render(){
         return (
-            
-            <div>
+            <div className="app">
                 {this.renderContent()}
             </div>
         )
