@@ -3,11 +3,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import axios from 'axios';
 
-import Loading from './Loading';
-import ResultCard from './ResultCard';
+import Loading from './components/Loading';
+import Results from './components/Results';
 
 class App extends React.Component{
     state = {
+        emData: [],
+        population: [],
         today: new Date().getDay(),
         time: new Date().toLocaleTimeString(),
         lat: null, lng: null,
@@ -16,6 +18,27 @@ class App extends React.Component{
     
     componentDidMount(){
            this.getCoords();
+           this.getData();
+    }
+    async getData(){
+        const response = await axios.get('http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL', {
+            params: {
+                format: 'json',
+                per_page: 30000, // max amount = 15576, as of 27.02.2019. 15k = 40 years of data.
+            }
+
+        });
+        console.log(response);
+        this.setState({ population: response.data });
+        const response2 = await axios.get('http://api.worldbank.org/v2/country/all/indicator/EN.ATM.CO2E.KT', {
+            params: {
+                format: 'json',
+                per_page: 30000, // max amount = 15576, as of 27.02.2019. 15k = 40 years of data.
+            }
+
+        });
+        console.log(response2);
+        this.setState({ emData: response2.data });
     }
     async getCoords(){
         await window.navigator.geolocation.getCurrentPosition(
@@ -37,28 +60,22 @@ class App extends React.Component{
             return (
                 <div className="container">
                     <div className="toolbar">
-                        <p>CO<sub>2</sub> Emissions</p>
+                        <div className="co"><p>CO<sub>2</sub> Emissions</p></div>
                     </div>
                     <div className="content">
                         <form className="locationForm">
                             <label>
-                                <input type="text" className="searchBar" placeholder="Example: Helsinki, Turku, London"></input>
+                                <input type="text" className="searchBar" placeholder="Example: Helsinki, Turku, London" />
                             </label>
                             <input type="submit" className="searchButton" value="Search" />
                             <label>
-                                <input type="checkbox" className="capitalSearch" name="capital" value="true" /><p className="checkText">Show per capita</p>
+                                <input type="checkbox" className="capitalSearch" name="capital" value="true" />
+                                <p className="checkText">Show per capita</p>
                             </label>
                         </form>
                         <div className="resultArea">
-                        <h2>Results</h2>
-                            <ul>
-                                <li><ResultCard/></li>
-                                <li><ResultCard/></li>
-                                <li><ResultCard/></li>
-                                <li><ResultCard/></li>
-                                <li><ResultCard/></li>
-
-                            </ul>
+                            <h2>Results</h2>
+                            <Results />
                         </div>
                     </div>
                 </div>
@@ -81,5 +98,4 @@ class App extends React.Component{
     
 };
 
-// Take the react component and show it on the screen
 ReactDOM.render(<App />, document.querySelector('#root'));
