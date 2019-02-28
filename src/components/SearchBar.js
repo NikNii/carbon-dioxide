@@ -23,7 +23,7 @@ class SearchBar extends React.Component {
                         className="searchBar" 
                         placeholder="Example: Finland, Sweden" 
                         value={this.state.term} 
-                        onChange={(e) => {console.log(e.target.value);this.setState({ term: e.target.value })}}/>
+                        onChange={(e) => {this.setState({ term: e.target.value })}}/>
                 </label>
                 <input type="submit" className="searchButton" value="Search" />
                 <label>

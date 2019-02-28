@@ -55,7 +55,7 @@ class App extends React.Component{
                                     units: 'metric',
                                     appid: 'bd792b4f514e82a2468853df8a863379'}
                         });
-            this.setState({ localCity: response.data.city.country,});
+            this.setState({ localCity: response.data.city,});
             console.log('Location found: ', this.state.localCity)
         // }
     }
@@ -74,11 +74,7 @@ class App extends React.Component{
         for (let i=0; i < this.state.emData[1].length; i++) {
             resultCards = resultCards.concat(this.state.emData[1][i].country.value);
         }
-        // const resultPrints = resultCards.map((result) => {
-        //     return console.log(result);
-        // })
         this.setState({ countries: resultCards });
-        console.log(this.state.lat, this.state.lng)
         this.getLocation(this.state.lat, this.state.lng);
     }
     async getEm(){
@@ -97,6 +93,13 @@ class App extends React.Component{
 
         this.getPop();
     }
+    getComparisonCountries(){
+        let  countryIndexes = [];
+        for (let i=0; i < this.state.emData[1].length; i++) {
+            countryIndexes = countryIndexes.concat(this.state.emData[1][i].country.value);
+        }
+        this.setState({ countries: countryIndexes });
+    }
     onSearchSubmit = async (term) => {
         const response = await this.state.countries.findIndex((value) => {
             return term === value;
@@ -104,14 +107,7 @@ class App extends React.Component{
         console.log('onSearchSubmit found this!: ', response);
         this.setState({ 
             activeSearch: true,
-            searchResults: {
-                country: '',
-                year: '',
-                emissions: '',
-                population: ''
-            },
-            searchIndex: response
-        });
+            searchIndex: response });
 
     }
 
@@ -140,33 +136,46 @@ class App extends React.Component{
 
         const Local = () => (
             <div className="content">
-                <Results results={{ 
-                        index: this.state.searchIndex,
-                        pop: this.state.population,
-                        emission: this.state.emData,
-                        popDone: this.state.popDone,
-                        emDone: this.state.emDone
-                        }}/>
-
+                {!(this.state.emDone & this.state.popDone)&&
+                    <Loading message={'Fetching data, please wait'}/>
+                }
+                <div className="localExcuse">
+                    <p>You're in <h2>{this.state.localCity.name}, {this.state.localCity.country}</h2> </p>
+                    <p>Due to the lack of time on my behalf, I didn't have time to figure out how to change OpenWeatherApi's country code to match World Bank's code. Or alternatively use some other method altogether.</p>
+                </div>
+                
             </div>
         )
 
         const Compare = () => (
             <div className="content">
+                {!(this.state.emDone & this.state.popDone)&&
+                    <Loading message={'Fetching data, please wait'}/>
+                }
+                {(this.state.emDone&this.state.popDone)&&
                 <div className= "compareResults">
                     <div className="firstResults">
-                    <Results results={{ pop: this.state.population,
-                                            emission: this.state.emData,
-                                            popDone: this.state.popDone,
-                                            emDone: this.state.emDone}}/>
+                    <Results results={{ 
+                        index: this.state.searchIndex,
+                        pop: this.state.population,
+                        emission: this.state.emData,
+                        popDone: this.state.popDone,
+                        emDone: this.state.emDone,
+                        indxChange: 59,
+                        }}/>
                     </div>
                     <div className="secondResults">
-                    <Results results={{ pop: this.state.population,
-                                            emission: this.state.emData,
-                                            popDone: this.state.popDone,
-                                            emDone: this.state.emDone}}/>
+                    <Results results={{ 
+                        index: this.state.searchIndex,
+                        pop: this.state.population,
+                        emission: this.state.emData,
+                        popDone: this.state.popDone,
+                        emDone: this.state.emDone,
+                        indxChange: 59,
+                    }}/>
                     </div>
                 </div>
+                }
             </div>
         )
         // Checks whether there's an error

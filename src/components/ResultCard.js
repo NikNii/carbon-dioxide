@@ -6,7 +6,7 @@ const ResultCard = (props) => {
 
     return (
         <div className="card">
-            <h3>{props.location} {props.year}</h3>
+            <h3>{props.location} in {props.year}</h3>
             <ul className="mainData">
                 <li className="emission">Emissions:  <p>{props.emissions}</p></li>
                 <li className="population">Population:  <p> {props.population}</p> </li>
