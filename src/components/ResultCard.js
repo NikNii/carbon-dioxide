@@ -7,15 +7,14 @@ const ResultCard = (props) => {
     return (
         <div className="card">
             <h3>{props.location} {props.year}</h3>
-            <div className="mainData">
-                <p className="emission">Emissions: {props.emissions}</p>
-                <p className="population">Population: {props.population}</p>
-                <p className="relativeData">Emissions per person: {props.emissions/props.population}</p>
+            <ul className="mainData">
+                <li className="emission">Emissions:  <p>{props.emissions}</p></li>
+                <li className="population">Population:  <p> {props.population}</p> </li>
+                <li className="relativeData">Emissions per person: <p> {props.emissions/props.population}</p> </li> 
 
-            </div>
+            </ul>
         </div>
     )
-    
 };
 
 ResultCard.defaultProps = {

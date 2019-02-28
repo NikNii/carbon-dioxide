@@ -1,15 +1,31 @@
 // Import the React and ReactDOM libraries
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import axios from 'axios';
 
 import Loading from './components/Loading';
 import Results from './components/Results';
+import SearchBar from './components/SearchBar';
 
 class App extends React.Component{
     state = {
         emData: [],
-        population: [],
+        population: [
+            {lastupdated: '2019-02-28'},
+            [{
+                country: {id:'1A', value: 'Placeholder Country'},
+                date: '9999',
+                value: '9001'
+            }]
+            
+        ],
+        popDone: false,
+        emDone: false,
+        countries: [],
+        activeSearch: false,
+        localCity: '',
+        searchIndex: 0,
         today: new Date().getDay(),
         time: new Date().toLocaleTimeString(),
         lat: null, lng: null,
@@ -18,9 +34,32 @@ class App extends React.Component{
     
     componentDidMount(){
            this.getCoords();
-           this.getData();
+           this.getEm();
+           
+
     }
-    async getData(){
+    async getCoords(){
+        await window.navigator.geolocation.getCurrentPosition(
+            position => this.setState({ lat: position.coords.latitude, 
+                                        lng: position.coords.longitude}),
+            error =>    this.setState({ errorMessage:error.message }).then(()=> {
+            })
+        );
+        console.log('Coordinates examined!')
+    }
+    async getLocation(lat, lng){
+        // if(this.state.weatcherCheck){
+            const response = await axios.get('http://api.openweathermap.org/data/2.5/forecast', {
+                        params: {   lat: lat,
+                                    lon: lng,
+                                    units: 'metric',
+                                    appid: 'bd792b4f514e82a2468853df8a863379'}
+                        });
+            this.setState({ localCity: response.data.city.country,});
+            console.log('Location found: ', this.state.localCity)
+        // }
+    }
+    async getPop(){
         const response = await axios.get('http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL', {
             params: {
                 format: 'json',
@@ -28,8 +67,22 @@ class App extends React.Component{
             }
 
         });
-        console.log(response);
-        this.setState({ population: response.data });
+        console.log('Population fetched!');
+        this.setState({ population: response.data,
+                        popDone: true });
+        let  resultCards = [];
+        for (let i=0; i < this.state.emData[1].length; i++) {
+            resultCards = resultCards.concat(this.state.emData[1][i].country.value);
+        }
+        // const resultPrints = resultCards.map((result) => {
+        //     return console.log(result);
+        // })
+        this.setState({ countries: resultCards });
+        console.log(this.state.lat, this.state.lng)
+        this.getLocation(this.state.lat, this.state.lng);
+    }
+    async getEm(){
+        
         const response2 = await axios.get('http://api.worldbank.org/v2/country/all/indicator/EN.ATM.CO2E.KT', {
             params: {
                 format: 'json',
@@ -37,17 +90,85 @@ class App extends React.Component{
             }
 
         });
-        console.log(response2);
-        this.setState({ emData: response2.data });
+        console.log('Emissions fetched!');
+        // console.log('render results: ' this.state.);
+        this.setState({ emData: response2.data,
+                        emDone: true });
+
+        this.getPop();
     }
-    async getCoords(){
-        await window.navigator.geolocation.getCurrentPosition(
-            position => this.setState({ lat: position.coords.latitude, 
-                                        lng: position.coords.longitude}),
-            error =>    this.setState({ errorMessage:error.message })
-        );
+    onSearchSubmit = async (term) => {
+        const response = await this.state.countries.findIndex((value) => {
+            return term === value;
+        });
+        console.log('onSearchSubmit found this!: ', response);
+        this.setState({ 
+            activeSearch: true,
+            searchResults: {
+                country: '',
+                year: '',
+                emissions: '',
+                population: ''
+            },
+            searchIndex: response
+        });
+
     }
+
     renderContent(){
+        const Search = () => (
+        <div className="content">
+            <SearchBar onSubmit={this.onSearchSubmit} />
+            <div className="resultArea">
+            {!(this.state.emDone & this.state.popDone)&&
+                <Loading message={'Fetching data, please wait'}/>
+            }
+            {this.state.activeSearch &&
+                <div>
+                    <Results results={{ 
+                        index: this.state.searchIndex,
+                        pop: this.state.population,
+                        emission: this.state.emData,
+                        popDone: this.state.popDone,
+                        emDone: this.state.emDone
+                        }}/>
+                </div>
+            }
+            </div>
+        </div>
+        )
+
+        const Local = () => (
+            <div className="content">
+                <Results results={{ 
+                        index: this.state.searchIndex,
+                        pop: this.state.population,
+                        emission: this.state.emData,
+                        popDone: this.state.popDone,
+                        emDone: this.state.emDone
+                        }}/>
+
+            </div>
+        )
+
+        const Compare = () => (
+            <div className="content">
+                <div className= "compareResults">
+                    <div className="firstResults">
+                    <Results results={{ pop: this.state.population,
+                                            emission: this.state.emData,
+                                            popDone: this.state.popDone,
+                                            emDone: this.state.emDone}}/>
+                    </div>
+                    <div className="secondResults">
+                    <Results results={{ pop: this.state.population,
+                                            emission: this.state.emData,
+                                            popDone: this.state.popDone,
+                                            emDone: this.state.emDone}}/>
+                    </div>
+                </div>
+            </div>
+        )
         // Checks whether there's an error
         if(this.state.errorMessage && !this.state.lat && !this.state.lng){
             return <div>
@@ -60,24 +181,36 @@ class App extends React.Component{
             return (
                 <div className="container">
                     <div className="toolbar">
-                        <div className="co"><p>CO<sub>2</sub> Emissions</p></div>
-                    </div>
-                    <div className="content">
-                        <form className="locationForm">
-                            <label>
-                                <input type="text" className="searchBar" placeholder="Example: Helsinki, Turku, London" />
-                            </label>
-                            <input type="submit" className="searchButton" value="Search" />
-                            <label>
-                                <input type="checkbox" className="capitalSearch" name="capital" value="true" />
-                                <p className="checkText">Show per capita</p>
-                            </label>
-                        </form>
-                        <div className="resultArea">
-                            <h2>Results</h2>
-                            <Results />
+                        <div className="co">
+                            <p>CO<sub>2</sub> Emissions</p>
+                            
                         </div>
+                        
                     </div>
+                    <Router>
+                        <div>
+                            <div className="navBar">
+                                <ul className="navButtons">
+                                    <li>
+                                        <Link to="/">Search</Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/local">Local CO<sub>2</sub></Link>
+                                    </li>
+                                    <li>
+                                        <Link to="/compare">Compare</Link>
+                                    </li>
+                                </ul>
+                            </div>   
+
+                            <Route exact path="/" component={Search} />
+                            <Route exact path="/local" component={Local} />
+                            <Route exact path="/compare" component={Compare} />
+
+
+                        </div>
+                    </Router>
+
                 </div>
             )
             
