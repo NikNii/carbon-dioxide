@@ -25,8 +25,6 @@ class App extends React.Component{
         activeSearch: false,
         localCity: '',
         searchIndex: 0,
-        today: new Date().getDay(),
-        time: new Date().toLocaleTimeString(),
         lat: null, lng: null,
         errorMessage: ''
 };

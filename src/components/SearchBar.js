@@ -1,8 +1,6 @@
 import React from 'react';
 import '../stylesheet.css';
 
-import Results from './Results';
-
 class SearchBar extends React.Component {
     state = {
         term: ''
@@ -10,10 +8,8 @@ class SearchBar extends React.Component {
 
     onFormSubmit = event => {
         event.preventDefault();
-        console.log(this.state.term);
         this.props.onSubmit(this.state.term);
     }
-
     render(){
         return(
             <form onSubmit={this.onFormSubmit} className="locationForm">
