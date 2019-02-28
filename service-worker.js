@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/NikNii/carbon-dioxide/precache-manifest.681e62225e8886dabd8ffc29c2ffd2b1.js"
+  "/NikNii/carbon-dioxide/precache-manifest.2fdab64df2abcf30b815beebdc00b1d4.js"
 );
 
 workbox.clientsClaim();
