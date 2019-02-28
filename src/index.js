@@ -12,13 +12,12 @@ class App extends React.Component{
     state = {
         emData: [],
         population: [
-            {lastupdated: '2019-02-28'},
+            {   lastupdated: '2019-02-28' },
             [{
                 country: {id:'1A', value: 'Placeholder Country'},
                 date: '9999',
                 value: '9001'
             }]
-            
         ],
         popDone: false,
         emDone: false,
@@ -31,13 +30,13 @@ class App extends React.Component{
         lat: null, lng: null,
         errorMessage: ''
 };
-    
     componentDidMount(){
            this.getCoords();
            this.getEm();
            
 
     }
+    // Function to determined the physical coordinates of the user's pc.
     async getCoords(){
         await window.navigator.geolocation.getCurrentPosition(
             position => this.setState({ lat: position.coords.latitude, 
@@ -47,6 +46,8 @@ class App extends React.Component{
         );
         console.log('Coordinates examined!')
     }
+
+    // GET function to get the user's location data.
     async getLocation(lat, lng){
         // if(this.state.weatcherCheck){
             const response = await axios.get('http://api.openweathermap.org/data/2.5/forecast', {
@@ -59,6 +60,8 @@ class App extends React.Component{
             console.log('Location found: ', this.state.localCity)
         // }
     }
+
+    // GET function to get the population data.
     async getPop(){
         const response = await axios.get('http://api.worldbank.org/v2/country/all/indicator/SP.POP.TOTL', {
             params: {
@@ -77,8 +80,9 @@ class App extends React.Component{
         this.setState({ countries: resultCards });
         this.getLocation(this.state.lat, this.state.lng);
     }
+
+    // GET function to get the emission data.
     async getEm(){
-        
         const response2 = await axios.get('http://api.worldbank.org/v2/country/all/indicator/EN.ATM.CO2E.KT', {
             params: {
                 format: 'json',
@@ -90,14 +94,14 @@ class App extends React.Component{
         // console.log('render results: ' this.state.);
         this.setState({ emData: response2.data,
                         emDone: true });
-
         this.getPop();
     }
+
+    // This function gets the value from the searchbox and finds the index of the value and updates into the state.
     onSearchSubmit = async (term) => {
         const response = await this.state.countries.findIndex((value) => {
             return term === value;
         });
-        console.log('onSearchSubmit found this!: ', response);
         if(response > 0){
             this.setState({ 
             activeSearch: true,
@@ -105,31 +109,37 @@ class App extends React.Component{
         }
     }
 
+    // A seperate render function so it would be easer to wrap the whole app in the actual render function, if needed.
     renderContent(){
+
+        // Router site for the search functionality
         const Search = () => (
         <div className="content">
             <SearchBar onSubmit={this.onSearchSubmit} />
             <div className="resultArea">
-            {!(this.state.emDone & this.state.popDone)&&
-                <Loading message={'Fetching data, please wait'}/>
-            }
-            {this.state.activeSearch &&
-                <div>
-                    <Results results={{ 
-                        index: this.state.searchIndex,
-                        pop: this.state.population,
-                        emission: this.state.emData,
-                        popDone: this.state.popDone,
-                        emDone: this.state.emDone
-                        }}/>
-                </div>
-            }
+                {/* Display a fetching notification, to let the user know something is happening. */}
+                {!(this.state.emDone & this.state.popDone)&&
+                    <Loading message={'Fetching data, please wait'}/>
+                }
+                {this.state.activeSearch &&
+                    <div>
+                        <Results results={{ 
+                            index: this.state.searchIndex,
+                            pop: this.state.population,
+                            emission: this.state.emData,
+                            popDone: this.state.popDone,
+                            emDone: this.state.emDone
+                            }}/>
+                    </div>
+                }
             </div>
         </div>
         )
 
+        // Router site for the local data
         const Local = () => (
             <div className="content">
+                {/* Display a fetching notification, to let the user know something is happening. */}
                 {!(this.state.emDone & this.state.popDone)&&
                     <Loading message={'Fetching data, please wait'}/>
                 }
@@ -141,8 +151,10 @@ class App extends React.Component{
             </div>
         )
 
+        // Router site for the comparison
         const Compare = () => (
             <div className="content">
+                {/* Display a fetching notification, to let the user know something is happening. */}
                 {!(this.state.emDone & this.state.popDone)&&
                     <Loading message={'Fetching data, please wait'}/>
                 }
@@ -183,7 +195,6 @@ class App extends React.Component{
         }
         // Checks if the location has been received
         if(!this.state.errorMessage && this.state.lat && this.state.lng){
-            // this.getWeather(this.state.lat, this.state.lng);
             return (
                 <div className="container">
                     <div className="toolbar">
@@ -208,24 +219,18 @@ class App extends React.Component{
                                     </li>
                                 </ul>
                             </div>   
-
                             <Route exact path="/" component={Search} />
                             <Route exact path="/local" component={Local} />
                             <Route exact path="/compare" component={Compare} />
-
-
                         </div>
                     </Router>
-
                 </div>
             )
-            
         }
         // If neither of the above work:
         // It renders a "loading" window until the user accepts the location request
         return <div><Loading message="Please accept the location request.."/></div>
     }
-    
     render(){
         return (
             <div className="app">
@@ -233,8 +238,6 @@ class App extends React.Component{
             </div>
         )
     }
-        
-    
 };
 
 ReactDOM.render(<App />, document.querySelector('#root'));
