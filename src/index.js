@@ -93,22 +93,16 @@ class App extends React.Component{
 
         this.getPop();
     }
-    getComparisonCountries(){
-        let  countryIndexes = [];
-        for (let i=0; i < this.state.emData[1].length; i++) {
-            countryIndexes = countryIndexes.concat(this.state.emData[1][i].country.value);
-        }
-        this.setState({ countries: countryIndexes });
-    }
     onSearchSubmit = async (term) => {
         const response = await this.state.countries.findIndex((value) => {
             return term === value;
         });
         console.log('onSearchSubmit found this!: ', response);
-        this.setState({ 
+        if(response > 0){
+            this.setState({ 
             activeSearch: true,
             searchIndex: response });
-
+        }
     }
 
     renderContent(){
@@ -153,26 +147,29 @@ class App extends React.Component{
                     <Loading message={'Fetching data, please wait'}/>
                 }
                 {(this.state.emDone&this.state.popDone)&&
-                <div className= "compareResults">
-                    <div className="firstResults">
-                    <Results results={{ 
-                        index: this.state.searchIndex,
-                        pop: this.state.population,
-                        emission: this.state.emData,
-                        popDone: this.state.popDone,
-                        emDone: this.state.emDone,
-                        indxChange: 59,
+                <div>
+                    <p className="compareText">The comparison data is from 2014 on purpose. The last 5 years don't have all of the data so I wanted to put the latest entries that have all of the data.</p>
+                    <div className= "compareResults">
+                        <div className="firstResults">
+                        <Results results={{ 
+                            index: this.state.searchIndex,
+                            pop: this.state.population,
+                            emission: this.state.emData,
+                            popDone: this.state.popDone,
+                            emDone: this.state.emDone,
+                            indxChange: 59,
+                            }}/>
+                        </div>
+                        <div className="secondResults">
+                        <Results results={{ 
+                            index: this.state.searchIndex,
+                            pop: this.state.population,
+                            emission: this.state.emData,
+                            popDone: this.state.popDone,
+                            emDone: this.state.emDone,
+                            indxChange: 59,
                         }}/>
-                    </div>
-                    <div className="secondResults">
-                    <Results results={{ 
-                        index: this.state.searchIndex,
-                        pop: this.state.population,
-                        emission: this.state.emData,
-                        popDone: this.state.popDone,
-                        emDone: this.state.emDone,
-                        indxChange: 59,
-                    }}/>
+                        </div>
                     </div>
                 </div>
                 }

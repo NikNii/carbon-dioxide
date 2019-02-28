@@ -248,6 +248,12 @@
         margin: auto;
         text-align: center;
     }
+    .compareText {
+        width: 70%;
+        margin: auto !important;
+        padding: 15px;
+        text-align: center;
+    }
 }
 
 /* CSS for portrait orientation */
@@ -434,9 +440,11 @@
     }
     .firstResults, .secondResults {
         display: inline-block;
-        width: 50%;
+        width: 48%;
+        max-height: 950px;
         margin: 0;
         box-sizing: border-box;
+        overflow: auto;
     }
     .firstResults {
         border-right: solid 1px rgba(202, 202, 202, 0.7);
@@ -456,5 +464,12 @@
     }
     .localExcuse p{
         font-size: 20px;
+    }
+    .compareText {
+        width: 90%;
+        margin: auto !important;
+        padding: 15px;
+        font-size: 18px;
+        text-align: center;
     }
 }
